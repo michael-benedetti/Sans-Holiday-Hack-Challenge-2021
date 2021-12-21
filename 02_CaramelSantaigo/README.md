@@ -136,7 +136,7 @@ Logging into the terminal, we get the following prompt:
 If we recall from earlier, Piney gave us a hint about bypassing the game by leveraging a cookie.  Taking a look at our cookies in the chrome developer view, we can see that we do indeed have an interesting looking cookie:
 
 ```
-
+eJx1UsFu2zAM_RVCZ2Owk7SNc9uyDWvRoUUaoIekB1qibS2yaEhysqzov49qt8OA7mTpPb73SMrPyuBZrdQjGU8xnwtFrhXkhk7k4Ja7zvr4hn6zPkW12qltTyB3GMgny54MRB4o9dZ3gA1PCR4S6gPcHSm0jk-A3sD9OfXsP4jVX3nHCQKhc2foCZPYvImnmI3iiJoitBzAeiNJMWvv-gKuwXOyWupTT6JFEebEAI8YYgYH4UZJI9AYKet6DEY9yZenINPNZoI51pj7l_uWD2cu4AZH9MLwmPE8607dsjfsC_jiOydzCHsfsJuogPUv0j1saJwaZ7UQ39mnsJ_Kkmp0wqNHg5K6U2seyffYkRh9Jj9gOEj9R59OFMYCPpHr7DQItOEjekuDLeCr9a-BWb-h8-EHHl-9zUFWoOlPM-9nSpNO1tezMxTUkwwepJyHByKjVstlKYCsmvJr_necd9r7x7VQR6sTh7Nsj_IWn-UtYr_aq-qqXBiaU6uxqbCulkQX2JSLel63aOiC9HKpK305b7GsFu2lLhtztahnQtZl01Z7VcifEeWtNF2bFezVFmX9BGtG1_DPvXpRL78B7MXowQ
 ```
 
 In our hints tab, we see a link to a [gist that details how to decode flask cookies](https://gist.github.com/chriselgee/b9f1861dd9b99a8c1ed30066b25ff80b).  We can leverage this to decode details about our game and solve this challenge.
