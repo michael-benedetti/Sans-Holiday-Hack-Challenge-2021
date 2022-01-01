@@ -175,9 +175,9 @@ Here's what Ribb has to say:
 ## The Main Challenge
 
 Let's start by visiting [the site](https://staging.jackfrosttower.com). We are presented with a coming soon page and an
-input box to proviide an email to "stay in touch". We can see via the network tab that submitting an email posts to
+input box to provide an email to "stay in touch". We can see via the network tab that submitting an email posts to
 the `/testsite` endpoint. Some quick fiddling with the input shows that some format validation is in place, and simple
-sqli tricks don't work right out the gate. Let's check out the provided source code.
+SQLi tricks don't work right out the gate. Let's check out the provided source code.
 
 Looking through the code, we see a series of API endpoints that are exposed. Some of them require an authenticated
 session to access such as the `edit` endpoint:
@@ -314,7 +314,7 @@ will perform our injection on one of the provided ids.
 Here's a simple example query which will return all entries with an id value less than 10:
 
 ```
-https://staging.jackfrosttower.com/detail/1,2 OR id%3C=10
+https://staging.jackfrosttower.com/detail/1,2 OR id<=10
 ```
 
 Let's take this to the next level and see if we can pull the users table:
@@ -323,7 +323,7 @@ Let's take this to the next level and see if we can pull the users table:
 https://staging.jackfrosttower.com/detail/1,2 UNION SELECT * FROM users--
 ```
 
-This injection will union the users table with the `uniquecontact` information the form is supposed to pull back. Here's
+This injection will union the `users` table with the `uniquecontact` information the form is supposed to pull back. Here's
 the result:
 
 ![Successful SQLi](SQLi.png)
