@@ -137,6 +137,14 @@ Here's what each has to say:
 > 
 > And, now that you've helped us solve everything, feel free to show off your skills with some swag - only for our victors!
 
+### Jack Frost
+
+> I was just having a little fun.  C'mon, man!
+> 
+> And, I was just getting started! I had such big plans!
+> 
+> I don't want to go home!!!
+
 ### Santa
 
 > The Frostians have reached out to me via video link. They’ve explained to me all that has happened.
