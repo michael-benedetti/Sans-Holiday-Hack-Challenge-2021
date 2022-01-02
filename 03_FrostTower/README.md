@@ -1,21 +1,21 @@
-# Challenge 3: That Frost Tower's Entrance 
+# Challenge 3: That Frost Tower's Entrance
 
 > Turn up the heat to defrost the entrance to Frost Tower. Click on the Items tab in your badge to find a link to the Wifi Dongle's CLI interface. Talk to Greasy Gopherguts outside the tower for tips.
 
 ## The Hint
 
-We can meet up with Greasy in the main North Pole area.  Here's what he has to say:
+We can meet up with Greasy in the main North Pole area. Here's what he has to say:
 
 > Grnph. Blach! Phlegm.
-> 
+>
 > I'm Greasy Gopherguts. I need help with parsing some Nmap output.
-> 
+>
 > If you help me find some results, I'll give you some hints about Wi-Fi.
-> 
+>
 > Click on the terminal next to me and read the instructions.
-> 
+>
 > Maybe search for a cheat sheet if the hints in the terminal don't do it for ya'.
-> 
+>
 > You’ll type quizme in the terminal and grep through the Nmap bigscan.gnmap file to find answers.
 
 The terminal prompts us with the following challenge:
@@ -24,7 +24,7 @@ The terminal prompts us with the following challenge:
 > Someone ran nmap -oG on a big network and produced this bigscan.gnmap file.
 > The quizme program has the questions and hints and, incidentally,
 > has NOTHING to do with an Elf University assignment. Thanks!
-> 
+>
 > Answer all the questions in the quizme executable:
 > - What port does 34.76.1.22 have open?
 > - What port does 34.77.207.226 have open?
@@ -32,10 +32,11 @@ The terminal prompts us with the following challenge:
 > - How many hosts have a web port open?  (Let's just use TCP ports 80, 443, and 8080)
 > - How many hosts with status Up have no (detected) open TCP ports?
 > - What's the greatest number of TCP ports any one host has open?
-> 
+>
 > Check out bigscan.gnmap and type quizme to answer each question.
 
-We can see we are dealing with a fairly large file, so as Greasy had indicated, we will need to use grep to find the answers to the questions:
+We can see we are dealing with a fairly large file, so as Greasy had indicated, we will need to use grep to find the
+answers to the questions:
 
 ```bash
 elf@397cb6df9b81:~$ ls -lh
@@ -65,19 +66,19 @@ elf@397cb6df9b81:~$ expr `cat bigscan.gnmap | awk ' { if ( length > x ) { x = le
 Here's what Greasy has to pass on after we complete his challenge:
 
 > Grack. Ungh. ... Oh!
-> 
+>
 > You really did it?
-> 
+>
 > Well, OK then. Here's what I know about the wifi here.
-> 
+>
 > Scanning for Wi-Fi networks with iwlist will be location-dependent. You may need to move around the North Pole and keep scanning to identify a Wi-Fi network.
-> 
+>
 > Wireless in Linux is supported by many tools, but iwlist and iwconfig are commonly used at the command line.
-> 
+>
 > The curl utility can make HTTP requests at the command line!
-> 
+>
 > By default, curl makes an HTTP GET request. You can add --request POST as a command line argument to make an HTTP POST request.
-> 
+>
 > When sending HTTP POST, add --data-binary followed by the data you want to send as the POST body.
 
 ## The Main Challenge

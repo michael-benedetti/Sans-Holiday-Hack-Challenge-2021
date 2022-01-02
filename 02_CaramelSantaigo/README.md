@@ -4,10 +4,10 @@
 
 ## The Hint
 
-We can find Piney behind the castle in the courtyard.  Here's what he has to say:
+We can find Piney behind the castle in the courtyard. Here's what he has to say:
 
 > Hi ho, Piney Sappington at your service!
->Well, honestly, I could use a touch of your services.
+> Well, honestly, I could use a touch of your services.
 >
 >You see, I've been looking at these documents, and I know someone has tampered with one file.
 >
@@ -21,11 +21,10 @@ We can find Piney behind the castle in the courtyard.  Here's what he has to say
 
 Opening the nearby console gives us the following prompt:
 
->HELP! That wily Jack Frost modified one of our naughty/nice records, and right 
-before Christmas! Can you help us figure out which one? We've installed exiftool
-for your convenience!
+> HELP! That wily Jack Frost modified one of our naughty/nice records, and right before Christmas! Can you help us figure out which one? We've installed exiftool for your convenience!
 
-`exiftool` is a handy tool that will enable us to read and write meta information in files.  Listing the contents of our current directory, we see a handful of files:
+`exiftool` is a handy tool that will enable us to read and write meta information in files. Listing the contents of our
+current directory, we see a handful of files:
 
 ```bash
 elf@fbb1b0f8b804:~$ ls -al                                                                [5/5]
@@ -93,9 +92,10 @@ Modify Date                     : 2021:12:24 00:00:00Z
 Modify Date                     : 2021:12:25 00:00:00Z
 ```
 
-We can see that five entries from the bottom we have a file that was modified just before midnight on Christmas Eve.  This corresponds with `2021-12-21.docx` which is our answer.  After submitting, here's what Piney has to say:
+We can see that five entries from the bottom we have a file that was modified just before midnight on Christmas Eve.
+This corresponds with `2021-12-21.docx` which is our answer. After submitting, here's what Piney has to say:
 
->Wow, you figured that out in no time! Thanks!
+> Wow, you figured that out in no time! Thanks!
 >
 >I knew they were up to no good.
 >
@@ -117,7 +117,7 @@ We can see that five entries from the bottom we have a file that was modified ju
 
 We can skip over to talk to Tangle Coalbox who is standing just next to the Caramel Santaigo terminal:
 
->Hey there, Gumshoe. Tangle Coalbox here again.
+> Hey there, Gumshoe. Tangle Coalbox here again.
 >
 >I've got a real doozy of a case for you this year.
 >
@@ -133,18 +133,21 @@ Logging into the terminal, we get the following prompt:
 
 ![Caramel Santaigo](CaramelSantaigo.png)
 
-If we recall from earlier, Piney gave us a hint about bypassing the game by leveraging a cookie.  Taking a look at our cookies in the chrome developer view, we can see that we do indeed have an interesting looking cookie:
+If we recall from earlier, Piney gave us a hint about bypassing the game by leveraging a cookie. Taking a look at our
+cookies in the chrome developer view, we can see that we do indeed have an interesting looking cookie:
 
 ```
 eJx1UsFu2zAM_RVCZ2Owk7SNc9uyDWvRoUUaoIekB1qibS2yaEhysqzov49qt8OA7mTpPb73SMrPyuBZrdQjGU8xnwtFrhXkhk7k4Ja7zvr4hn6zPkW12qltTyB3GMgny54MRB4o9dZ3gA1PCR4S6gPcHSm0jk-A3sD9OfXsP4jVX3nHCQKhc2foCZPYvImnmI3iiJoitBzAeiNJMWvv-gKuwXOyWupTT6JFEebEAI8YYgYH4UZJI9AYKet6DEY9yZenINPNZoI51pj7l_uWD2cu4AZH9MLwmPE8607dsjfsC_jiOydzCHsfsJuogPUv0j1saJwaZ7UQ39mnsJ_Kkmp0wqNHg5K6U2seyffYkRh9Jj9gOEj9R59OFMYCPpHr7DQItOEjekuDLeCr9a-BWb-h8-EHHl-9zUFWoOlPM-9nSpNO1tezMxTUkwwepJyHByKjVstlKYCsmvJr_necd9r7x7VQR6sTh7Nsj_IWn-UtYr_aq-qqXBiaU6uxqbCulkQX2JSLel63aOiC9HKpK305b7GsFu2lLhtztahnQtZl01Z7VcifEeWtNF2bFezVFmX9BGtG1_DPvXpRL78B7MXowQ
 ```
 
-In our hints tab, we see a link to a [gist that details how to decode flask cookies](https://gist.github.com/chriselgee/b9f1861dd9b99a8c1ed30066b25ff80b).  We can leverage this to decode details about our game and solve this challenge.
+In our hints tab, we see a link to
+a [gist that details how to decode flask cookies](https://gist.github.com/chriselgee/b9f1861dd9b99a8c1ed30066b25ff80b).
+We can leverage this to decode details about our game and solve this challenge.
 
 ```python
 import json
-import zlib; import itsdangerous
-
+import zlib;
+import itsdangerous
 
 if __name__ == '__main__':
     cookie = "eJx1UsFu2zAM_RVCZ2Owk7SNc9uyDWvRoUUaoIekB1qibS2yaEhysqzov49qt8OA7mTpPb73SMrPyuBZrdQjGU8xnwtFrhXkhk7k4Ja7zvr4hn6zPkW12qltTyB3GMgny54MRB4o9dZ3gA1PCR4S6gPcHSm0jk-A3sD9OfXsP4jVX3nHCQKhc2foCZPYvImnmI3iiJoitBzAeiNJMWvv-gKuwXOyWupTT6JFEebEAI8YYgYH4UZJI9AYKet6DEY9yZenINPNZoI51pj7l_uWD2cu4AZH9MLwmPE8607dsjfsC_jiOydzCHsfsJuogPUv0j1saJwaZ7UQ39mnsJ_Kkmp0wqNHg5K6U2seyffYkRh9Jj9gOEj9R59OFMYCPpHr7DQItOEjekuDLeCr9a-BWb-h8-EHHl-9zUFWoOlPM-9nSpNO1tezMxTUkwwepJyHByKjVstlKYCsmvJr_necd9r7x7VQR6sTh7Nsj_IWn-UtYr_aq-qqXBiaU6uxqbCulkQX2JSLel63aOiC9HKpK305b7GsFu2lLhtztahnQtZl01Z7VcifEeWtNF2bFezVFmX9BGtG1_DPvXpRL78B7MXowQ"

